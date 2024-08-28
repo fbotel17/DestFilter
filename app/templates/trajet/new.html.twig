@@ -9,23 +9,23 @@
             <h1 class="mb-4">Créer un nouveau trajet</h1>
 
             {{ form_start(form) }}
-                <div class="form-group">
+                <div class="form-group form-label">
                     {{ form_label(form.depart) }}
                     {{ form_widget(form.depart, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
-                <div class="form-group">
+                <div class="form-group form-label">
                     {{ form_label(form.arrivee) }}
                     {{ form_widget(form.arrivee, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
                 
-                <div class="form-group">
+                <div class="form-group form-label">
                     {{ form_label(form.temps) }}
                     {{ form_widget(form.temps, {'attr': {'class': 'form-control'}}) }}
                 </div>
 
-                <div class="form-group">
+                <div class="form-group form-label">
                     {{ form_label(form.observations) }}
                     {{ form_widget(form.observations, {'attr': {'class': 'form-control'}}) }}
                 </div>

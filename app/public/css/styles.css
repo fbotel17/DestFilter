@@ -1,0 +1,39 @@
+/* public/css/styles.css */
+.table-bg-white {
+    background-color: white;
+}
+
+.table-bg-white thead {
+    background-color: #343a40; /* Pour un fond de tête foncé, si tu veux le garder */
+    color: white;
+}
+
+.table-bg-white th, .table-bg-white td {
+    border: 1px solid #dee2e6;
+}
+
+
+/* Image de fond par défaut */
+body {
+    background-image: url('../images/Camion.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Cacher l'image de fond pour les écrans plus grands */
+@media (min-width: 768px) { /* Ajuste la largeur min-width selon le besoin */
+    body {
+        background-image: none;
+    }
+}
+
+
+.form-label {
+    background-color: #ffffff; /* Fond blanc */
+    padding: 5px; /* Espacement autour du texte */
+    border-radius: 4px; /* Coins arrondis pour un meilleur aspect */
+    display: block; /* Assure que le fond blanc prend toute la largeur du label */
+    margin-bottom: 5px; /* Espacement sous le label */
+}
