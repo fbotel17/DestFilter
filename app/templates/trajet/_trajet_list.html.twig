@@ -1,0 +1,20 @@
+{# templates/trajet/_trajet_list.html.twig #}
+{% for trajet in trajets %}
+    <tr>
+        <td>{{ trajet.depart }}</td>
+        <td>{{ trajet.arrivee }}</td>
+        <td>{{ trajet.temps }}</td>
+        <td>{{ trajet.observations }}</td>
+        <td>
+            <a href="{{ path('trajet_edit', {'id': trajet.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+            <form method="post" action="{{ path('trajet_delete', {'id': trajet.id}) }}" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce trajet ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trajet.id) }}">
+                <button class="btn btn-sm btn-danger">Supprimer</button>
+            </form>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="5" class="text-center">Aucun trajet trouvé.</td>
+    </tr>
+{% endfor %}

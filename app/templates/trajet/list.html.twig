@@ -1,0 +1,85 @@
+{# templates/trajet/list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Trajets{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h1 class="mb-4">Liste des Trajets</h1>
+
+            {# Formulaire de recherche #}
+            <form id="searchForm" class="form-inline mb-4">
+                <div class="form-group">
+                    <label for="searchAttribute" class="mr-2">Rechercher par</label>
+                    <select name="attribute" id="searchAttribute" class="form-control mr-2">
+                        <option value="depart" {% if app.request.get('attribute') == 'depart' %}selected{% endif %}>Départ</option>
+                        <option value="arrivee" {% if app.request.get('attribute') == 'arrivee' %}selected{% endif %}>Arrivée</option>
+                        <option value="temps" {% if app.request.get('attribute') == 'temps' %}selected{% endif %}>Temps</option>
+                        <option value="observation" {% if app.request.get('attribute') == 'observation' %}selected{% endif %}>Observation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="query" id="searchQuery" class="form-control mr-2" placeholder="Rechercher..." value="{{ app.request.get('query') }}">
+                </div>
+            </form>
+
+            <table class="table table-striped" id="trajetTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Départ</th>
+                        <th scope="col">Arrivée</th>
+                        <th scope="col">Temps</th>
+                        <th scope="col">Observations</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="trajetList">
+    {% for trajet in trajets %}
+        <tr>
+            <td>{{ trajet.depart }}</td>
+            <td>{{ trajet.arrivee }}</td>
+            <td>{{ trajet.temps }}</td>
+            <td>{{ trajet.observations }}</td>
+            <td>
+                <a href="{{ path('trajet_edit', {'id': trajet.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                <form method="post" action="{{ path('trajet_delete', {'id': trajet.id}) }}" style="display:inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce trajet ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trajet.id) }}">
+                    <button class="btn btn-sm btn-danger">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="5" class="text-center">Aucun trajet trouvé.</td>
+        </tr>
+    {% endfor %}
+</tbody>
+
+            </table>
+
+            <a href="{{ path('trajet_new') }}" class="btn btn-primary mt-3">Créer un nouveau trajet</a>
+        </div>
+    </div>
+
+    {# Inclure le script JS pour la recherche instantanée #}
+    <script>
+       document.getElementById('searchQuery').addEventListener('input', function() {
+    let form = document.getElementById('searchForm');
+    let formData = new FormData(form);
+    let url = '{{ path("trajet_list") }}?' + new URLSearchParams(formData).toString();
+
+    fetch(url, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('trajetList').innerHTML = html;
+    });
+});
+
+
+    </script>
+{% endblock %}
