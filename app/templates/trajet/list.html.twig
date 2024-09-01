@@ -7,11 +7,11 @@
     <div class="container">
         <h1 class="my-4">Liste des Trajets</h1>
 
-        {# Formulaire de recherche #}
-        <form id="searchForm" class="form-inline mb-4">
+        {# Formulaire de recherche existant #}
+        <form id="searchFormOld" class="form-inline mb-4">
             <div class="form-group mr-2">
-                <label for="searchAttribute" class="sr-only">Rechercher par</label>
-                <select name="attribute" id="searchAttribute" class="form-control">
+                <label for="searchAttributeOld" class="sr-only">Rechercher par</label>
+                <select name="attribute" id="searchAttributeOld" class="form-control">
                     <option value="depart" {% if app.request.get('attribute') == 'depart' %}selected{% endif %}>Départ</option>
                     <option value="arrivee" {% if app.request.get('attribute') == 'arrivee' %}selected{% endif %}>Arrivée</option>
                     <option value="temps" {% if app.request.get('attribute') == 'temps' %}selected{% endif %}>Temps</option>
@@ -19,7 +19,23 @@
                 </select>
             </div>
             <div class="form-group mr-2">
-                <input type="text" name="query" id="searchQuery" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}">
+                <input type="text" name="query" id="searchQueryOld" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}">
+            </div>
+        </form>
+
+        {# Nouveau formulaire de recherche #}
+        <form id="searchFormNew" class="form-inline mb-4">
+            <div class="form-group mr-2">
+                <label for="searchAttributeNew" class="sr-only">Rechercher par</label>
+                <select name="attribute" id="searchAttributeNew" class="form-control">
+                    <option value="depart" {% if app.request.get('attribute') == 'depart' or not app.request.get('attribute') %}selected{% endif %}>Départ</option>
+                    <option value="arrivee" {% if app.request.get('attribute') == 'arrivee' or not app.request.get('attribute') %}selected{% endif %}>Arrivée</option>
+                    <option value="temps" {% if app.request.get('attribute') == 'temps' %}selected{% endif %}>Temps</option>
+                    <option value="observation" {% if app.request.get('attribute') == 'observation' %}selected{% endif %}>Observation</option>
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <input type="text" name="query" id="searchQueryNew" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}">
             </div>
         </form>
 
@@ -43,8 +59,9 @@
 
     {# Inclure le script JS pour la recherche instantanée #}
     <script>
-       document.getElementById('searchQuery').addEventListener('input', function() {
-            let form = document.getElementById('searchForm');
+        // Fonction pour effectuer la recherche
+        function performSearch(formId) {
+            let form = document.getElementById(formId);
             let formData = new FormData(form);
             let url = '{{ path("trajet_list") }}?' + new URLSearchParams(formData).toString();
 
@@ -57,6 +74,16 @@
             .then(html => {
                 document.getElementById('trajetList').innerHTML = html;
             });
+        }
+
+        // Écouteur pour la recherche sur l'ancien formulaire
+        document.getElementById('searchQueryOld').addEventListener('input', function() {
+            performSearch('searchFormOld');
+        });
+
+        // Écouteur pour la recherche sur le nouveau formulaire
+        document.getElementById('searchQueryNew').addEventListener('input', function() {
+            performSearch('searchFormNew');
         });
     </script>
 {% endblock %}
