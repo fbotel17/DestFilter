@@ -22,7 +22,7 @@ class Trajet
     #[ORM\Column(length: 255)]
     private ?string $temps = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]  // Rendre le champ nullable
     private ?string $observations = null;
 
     public function getId(): ?int
@@ -71,7 +71,7 @@ class Trajet
         return $this->observations;
     }
 
-    public function setObservations(string $observations): static
+    public function setObservations(?string $observations): static  // Accepter null
     {
         $this->observations = $observations;
 

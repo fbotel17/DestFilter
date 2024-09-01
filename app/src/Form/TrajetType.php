@@ -6,6 +6,7 @@ use App\Entity\Trajet;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class TrajetType extends AbstractType
 {
@@ -15,7 +16,9 @@ class TrajetType extends AbstractType
             ->add('depart')
             ->add('arrivee')
             ->add('temps')
-            ->add('observations')
+            ->add('observations', TextType::class, [
+                'required' => false, // Rendre le champ facultatif
+            ])
         ;
     }
 

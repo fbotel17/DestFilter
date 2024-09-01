@@ -13,21 +13,6 @@
 }
 
 
-/* Image de fond par défaut */
-body {
-    background-image: url('../images/Camion.jpg');
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-/* Cacher l'image de fond pour les écrans plus grands */
-@media (min-width: 768px) { /* Ajuste la largeur min-width selon le besoin */
-    body {
-        background-image: none;
-    }
-}
 
 
 .form-label {
