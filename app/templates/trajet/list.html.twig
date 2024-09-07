@@ -93,6 +93,15 @@ performSearch('searchFormNew');
 document.getElementById('invertButton').addEventListener('click', function () {
 let oldSelect = document.getElementById('searchAttributeOld');
 let newSelect = document.getElementById('searchAttributeNew');
+let oldQuery = document.getElementById('searchQueryOld').value;
+let newQuery = document.getElementById('searchQueryNew').value;
+
+// Afficher les valeurs avant inversion pour débogage
+console.log('Before inversion:');
+console.log('Old Select Value:', oldSelect.value);
+console.log('New Select Value:', newSelect.value);
+console.log('Old Query:', oldQuery);
+console.log('New Query:', newQuery);
 
 // Inverser uniquement les valeurs sélectionnées dans les select
 let tempValue = oldSelect.value;
@@ -108,9 +117,20 @@ this.classList.remove('rotate-back');
 this.classList.add('rotate');
 }
 
-// Effectuer la recherche avec les nouvelles valeurs
+// Mettre à jour la valeur des sélecteurs dans les formulaires respectifs
+document.getElementById('searchAttributeOld').value = oldSelect.value;
+document.getElementById('searchAttributeNew').value = newSelect.value;
+
+// Effectuer la recherche avec les valeurs de recherche actuelles
 performSearch('searchFormOld');
 performSearch('searchFormNew');
+
+// Afficher les valeurs après inversion pour débogage
+console.log('After inversion:');
+console.log('Old Select Value:', oldSelect.value);
+console.log('New Select Value:', newSelect.value);
+console.log('Old Query:', oldQuery);
+console.log('New Query:', newQuery);
 });
 	</script>
 
