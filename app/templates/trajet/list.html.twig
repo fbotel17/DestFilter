@@ -23,8 +23,11 @@
 			</div>
 		</form>
 
-		{# Bouton pour inverser les sélecteurs #}
-		<button class="btn btn-secondary mb-4" id="invertButton">Inverser les sélections</button>
+		{# Bouton pour inverser les sélecteurs avec icône #}
+		<button class="btn btn-secondary mb-4" id="invertButton">
+			<i class="fas fa-exchange-alt"></i>
+			<!-- Icône de double flèche -->
+		</button>
 
 		{# Nouveau formulaire de recherche #}
 		<form id="searchFormNew" class="form-inline mb-4">
@@ -60,7 +63,7 @@
 		<a href="{{ path('trajet_new') }}" class="btn btn-primary mt-3">Créer un nouveau trajet</a>
 	</div>
 
-	{# Inclure le script JS pour la recherche instantanée et l'inversion #}
+	{# Inclure le script JS pour la recherche instantanée et l'inversion avec animation #}
 	<script>
 		// Fonction pour effectuer la recherche
 function performSearch(formId) {
@@ -86,7 +89,7 @@ document.getElementById('searchQueryNew').addEventListener('input', function () 
 performSearch('searchFormNew');
 });
 
-// Fonction pour inverser les valeurs des deux sélecteurs sans toucher aux champs de recherche
+// Fonction pour inverser les valeurs des deux sélecteurs sans toucher aux champs de recherche avec animation
 document.getElementById('invertButton').addEventListener('click', function () {
 let oldSelect = document.getElementById('searchAttributeOld');
 let newSelect = document.getElementById('searchAttributeNew');
@@ -96,9 +99,46 @@ let tempValue = oldSelect.value;
 oldSelect.value = newSelect.value;
 newSelect.value = tempValue;
 
+// Ajouter ou alterner les classes 'rotate' et 'rotate-back' pour faire tourner dans une direction différente à chaque clic
+if (this.classList.contains('rotate')) {
+this.classList.remove('rotate');
+this.classList.add('rotate-back');
+} else {
+this.classList.remove('rotate-back');
+this.classList.add('rotate');
+}
+
 // Effectuer la recherche avec les nouvelles valeurs
 performSearch('searchFormOld');
 performSearch('searchFormNew');
 });
 	</script>
+
+	<style>
+		/* Animation pour l'icône lors de l'inversion */
+		#invertButton i {
+			transition: transform 0.5s;
+		}
+
+		#invertButton {
+
+			transform: rotate(90deg);
+		}
+
+		#invertButton.rotate i {
+			transform: rotate(180deg);
+		}
+
+		#invertButton {
+			transition: transform 0.5s ease;
+		}
+
+		.rotate {
+			transform: rotate(180deg);
+		}
+
+		.rotate-back {
+			transform: rotate(360deg);
+		}
+	</style>
 {% endblock %}
