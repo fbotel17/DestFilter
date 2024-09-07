@@ -1,89 +1,104 @@
-{# templates/trajet/list.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Trajets{% endblock %}
+{% block title %}Liste des Trajets
+{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1 class="my-4">Liste des Trajets</h1>
+	<div class="container">
+		<h1 class="my-4">Liste des Trajets</h1>
 
-        {# Formulaire de recherche existant #}
-        <form id="searchFormOld" class="form-inline mb-4">
-            <div class="form-group mr-2">
-                <label for="searchAttributeOld" class="sr-only">Rechercher par</label>
-                <select name="attribute" id="searchAttributeOld" class="form-control">
-                    <option value="depart" {% if app.request.get('attribute') == 'depart' %}selected{% endif %}>Départ</option>
-                    <option value="arrivee" {% if app.request.get('attribute') == 'arrivee' %}selected{% endif %}>Arrivée</option>
-                    <option value="temps" {% if app.request.get('attribute') == 'temps' %}selected{% endif %}>Temps</option>
-                    <option value="observation" {% if app.request.get('attribute') == 'observation' %}selected{% endif %}>Observation</option>
-                </select>
-            </div>
-            <div class="form-group mr-2">
-                <input type="text" name="query" id="searchQueryOld" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}" autocomplete="off">
-            </div>
-        </form>
+		{# Formulaire de recherche existant #}
+		<form id="searchFormOld" class="form-inline mb-4">
+			<div class="form-group mr-2">
+				<label for="searchAttributeOld" class="sr-only">Rechercher par</label>
+				<select name="attribute" id="searchAttributeOld" class="form-control">
+					<option value="depart" {% if app.request.get('attribute') == 'depart' %} selected {% endif %}>Départ</option>
+					<option value="arrivee" {% if app.request.get('attribute') == 'arrivee' %} selected {% endif %}>Arrivée</option>
+					<option value="temps" {% if app.request.get('attribute') == 'temps' %} selected {% endif %}>Temps</option>
+					<option value="observation" {% if app.request.get('attribute') == 'observation' %} selected {% endif %}>Observation</option>
+				</select>
+			</div>
+			<div class="form-group mr-2">
+				<input type="text" name="query" id="searchQueryOld" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}" autocomplete="off">
+			</div>
+		</form>
 
-        {# Nouveau formulaire de recherche #}
-        <form id="searchFormNew" class="form-inline mb-4">
-            <div class="form-group mr-2">
-                <label for="searchAttributeNew" class="sr-only">Rechercher par</label>
-                <select name="attribute" id="searchAttributeNew" class="form-control">
-                    <option value="depart" {% if app.request.get('attribute') == 'depart' or not app.request.get('attribute') %}selected{% endif %}>Départ</option>
-                    <option value="arrivee" {% if app.request.get('attribute') == 'arrivee' or not app.request.get('attribute') %}selected{% endif %}>Arrivée</option>
-                    <option value="temps" {% if app.request.get('attribute') == 'temps' %}selected{% endif %}>Temps</option>
-                    <option value="observation" {% if app.request.get('attribute') == 'observation' %}selected{% endif %}>Observation</option>
-                </select>
-            </div>
-            <div class="form-group mr-2">
-                <input type="text" name="query" id="searchQueryNew" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}" autocomplete="off">
-            </div>
-        </form>
+		{# Bouton pour inverser les sélecteurs #}
+		<button class="btn btn-secondary mb-4" id="invertButton">Inverser les sélections</button>
 
-        <table class="table table-striped table-bg-white">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Départ</th>
-                    <th scope="col">Arrivée</th>
-                    <th scope="col">Temps</th>
-                    <th scope="col">Observation</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="trajetList">
-                {% include 'trajet/_trajet_list.html.twig' with { 'trajets': trajets } %}
-            </tbody>
-        </table>
+		{# Nouveau formulaire de recherche #}
+		<form id="searchFormNew" class="form-inline mb-4">
+			<div class="form-group mr-2">
+				<label for="searchAttributeNew" class="sr-only">Rechercher par</label>
+				<select name="attribute" id="searchAttributeNew" class="form-control">
+					<option value="depart" {% if app.request.get('attribute') == 'depart' %} selected {% endif %}>Départ</option>
+					<option value="arrivee" {% if app.request.get('attribute') == 'arrivee' or not app.request.get('attribute') %} selected {% endif %}>Arrivée</option>
+					<option value="temps" {% if app.request.get('attribute') == 'temps' %} selected {% endif %}>Temps</option>
+					<option value="observation" {% if app.request.get('attribute') == 'observation' %} selected {% endif %}>Observation</option>
+				</select>
+			</div>
+			<div class="form-group mr-2">
+				<input type="text" name="query" id="searchQueryNew" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}" autocomplete="off">
+			</div>
+		</form>
 
-        <a href="{{ path('trajet_new') }}" class="btn btn-primary mt-3">Créer un nouveau trajet</a>
-    </div>
+		<table class="table table-striped table-bg-white">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">Départ</th>
+					<th scope="col">Arrivée</th>
+					<th scope="col">Temps</th>
+					<th scope="col">Observation</th>
+					<th scope="col">Actions</th>
+				</tr>
+			</thead>
+			<tbody id="trajetList">
+				{% include 'trajet/_trajet_list.html.twig' with { 'trajets': trajets } %}
+			</tbody>
+		</table>
 
-    {# Inclure le script JS pour la recherche instantanée #}
-    <script>
-        // Fonction pour effectuer la recherche
-        function performSearch(formId) {
-            let form = document.getElementById(formId);
-            let formData = new FormData(form);
-            let url = '{{ path("trajet_list") }}?' + new URLSearchParams(formData).toString();
+		<a href="{{ path('trajet_new') }}" class="btn btn-primary mt-3">Créer un nouveau trajet</a>
+	</div>
 
-            fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('trajetList').innerHTML = html;
-            });
-        }
+	{# Inclure le script JS pour la recherche instantanée et l'inversion #}
+	<script>
+		// Fonction pour effectuer la recherche
+function performSearch(formId) {
+let form = document.getElementById(formId);
+let formData = new FormData(form);
+let url = '{{ path("trajet_list") }}?' + new URLSearchParams(formData).toString();
 
-        // Écouteur pour la recherche sur l'ancien formulaire
-        document.getElementById('searchQueryOld').addEventListener('input', function() {
-            performSearch('searchFormOld');
-        });
+fetch(url, {
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+}
+}).then(response => response.text()).then(html => {
+document.getElementById('trajetList').innerHTML = html;
+});
+}
 
-        // Écouteur pour la recherche sur le nouveau formulaire
-        document.getElementById('searchQueryNew').addEventListener('input', function() {
-            performSearch('searchFormNew');
-        });
-    </script>
+// Écouteurs pour la recherche
+document.getElementById('searchQueryOld').addEventListener('input', function () {
+performSearch('searchFormOld');
+});
+
+document.getElementById('searchQueryNew').addEventListener('input', function () {
+performSearch('searchFormNew');
+});
+
+// Fonction pour inverser les valeurs des deux sélecteurs sans toucher aux champs de recherche
+document.getElementById('invertButton').addEventListener('click', function () {
+let oldSelect = document.getElementById('searchAttributeOld');
+let newSelect = document.getElementById('searchAttributeNew');
+
+// Inverser uniquement les valeurs sélectionnées dans les select
+let tempValue = oldSelect.value;
+oldSelect.value = newSelect.value;
+newSelect.value = tempValue;
+
+// Effectuer la recherche avec les nouvelles valeurs
+performSearch('searchFormOld');
+performSearch('searchFormNew');
+});
+	</script>
 {% endblock %}
