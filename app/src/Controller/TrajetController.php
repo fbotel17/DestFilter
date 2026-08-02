@@ -46,13 +46,20 @@ class TrajetController extends AbstractController
      */
     public function list(Request $request, TrajetRepository $trajetRepository): Response
     {
-        $attribute = $request->query->get('attribute');
-        $query = $request->query->get('query');
+        $filters = [
+            'depart' => $request->query->get('depart'),
+            'arrivee' => $request->query->get('arrivee'),
+            'temps' => $request->query->get('temps'),
+            'observations' => $request->query->get('observations'),
+        ];
+        $filters = array_filter($filters, fn ($value) => $value !== null && $value !== '');
 
-        if ($attribute && $query) {
+        if ($filters) {
             $qb = $trajetRepository->createQueryBuilder('t');
-            $qb->where($qb->expr()->like('t.' . $attribute, ':query'))
-               ->setParameter('query', '%' . $query . '%');
+            foreach ($filters as $field => $value) {
+                $qb->andWhere($qb->expr()->like('t.' . $field, ':' . $field))
+                   ->setParameter($field, '%' . $value . '%');
+            }
             $trajets = $qb->getQuery()->getResult();
         } else {
             $trajets = $trajetRepository->findAll();

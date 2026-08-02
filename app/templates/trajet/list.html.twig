@@ -1,164 +1,162 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Trajets
-{% endblock %}
+{% block title %}Liste des trajets{% endblock %}
 
 {% block body %}
-	<div class="container">
-		<h1 class="my-4">Liste des Trajets</h1>
+    <div class="page-header">
+        <h1>Liste des trajets</h1>
+        <p>Combinez plusieurs critères pour retrouver un trajet.</p>
+    </div>
 
-		{# Formulaire de recherche existant #}
-		<form id="searchFormOld" class="form-inline mb-4">
-			<div class="form-group mr-2">
-				<label for="searchAttributeOld" class="sr-only">Rechercher par</label>
-				<select name="attribute" id="searchAttributeOld" class="form-control">
-					<option value="depart" {% if app.request.get('attribute') == 'depart' %} selected {% endif %}>Départ</option>
-					<option value="arrivee" {% if app.request.get('attribute') == 'arrivee' %} selected {% endif %}>Arrivée</option>
-					<option value="temps" {% if app.request.get('attribute') == 'temps' %} selected {% endif %}>Temps</option>
-					<option value="observation" {% if app.request.get('attribute') == 'observation' %} selected {% endif %}>Observation</option>
-				</select>
-			</div>
-			<div class="form-group mr-2">
-				<input type="text" name="query" id="searchQueryOld" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}" autocomplete="off">
-			</div>
-		</form>
+    <form id="searchForm" class="filter-bar" autocomplete="off">
+        <div class="filter-row filter-row-route">
+            <div class="filter-field">
+                <label for="fDepart">Départ</label>
+                <div class="field-wrap {% if app.request.get('depart') %}has-value{% endif %}">
+                    <input type="text" id="fDepart" name="depart" placeholder="Ville de départ" value="{{ app.request.get('depart') }}">
+                    <button type="button" class="clear-btn" data-clears="fDepart" aria-label="Effacer le départ">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
 
-		{# Bouton pour inverser les sélecteurs avec icône #}
-		<button class="btn btn-secondary mb-4" id="invertButton">
-			<i class="fas fa-exchange-alt"></i>
-			<!-- Icône de double flèche -->
-		</button>
+            <div class="filter-field">
+                <label for="fArrivee">Arrivée</label>
+                <div class="field-wrap {% if app.request.get('arrivee') %}has-value{% endif %}">
+                    <input type="text" id="fArrivee" name="arrivee" placeholder="Ville d'arrivée" value="{{ app.request.get('arrivee') }}">
+                    <button type="button" class="clear-btn" data-clears="fArrivee" aria-label="Effacer l'arrivée">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-		{# Nouveau formulaire de recherche #}
-		<form id="searchFormNew" class="form-inline mb-4">
-			<div class="form-group mr-2">
-				<label for="searchAttributeNew" class="sr-only">Rechercher par</label>
-				<select name="attribute" id="searchAttributeNew" class="form-control">
-					<option value="depart" {% if app.request.get('attribute') == 'depart' %} selected {% endif %}>Départ</option>
-					<option value="arrivee" {% if app.request.get('attribute') == 'arrivee' or not app.request.get('attribute') %} selected {% endif %}>Arrivée</option>
-					<option value="temps" {% if app.request.get('attribute') == 'temps' %} selected {% endif %}>Temps</option>
-					<option value="observation" {% if app.request.get('attribute') == 'observation' %} selected {% endif %}>Observation</option>
-				</select>
-			</div>
-			<div class="form-group mr-2">
-				<input type="text" name="query" id="searchQueryNew" class="form-control" placeholder="Rechercher..." value="{{ app.request.get('query') }}" autocomplete="off">
-			</div>
-		</form>
+        <div class="filter-row filter-row-extra">
+            <div class="filter-field">
+                <label for="fTemps">Temps</label>
+                <div class="field-wrap {% if app.request.get('temps') %}has-value{% endif %}">
+                    <input type="text" id="fTemps" name="temps" placeholder="Ex : 5h45" value="{{ app.request.get('temps') }}">
+                    <button type="button" class="clear-btn" data-clears="fTemps" aria-label="Effacer le temps">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
 
-		<table class="table table-striped table-bg-white">
-			<thead class="thead-dark">
-				<tr>
-					<th scope="col">Départ</th>
-					<th scope="col">Arrivée</th>
-					<th scope="col">Temps</th>
-					<th scope="col">Observation</th>
-					<th scope="col">Actions</th>
-				</tr>
-			</thead>
-			<tbody id="trajetList">
-				{% include 'trajet/_trajet_list.html.twig' with { 'trajets': trajets } %}
-			</tbody>
-		</table>
+            <div class="filter-field">
+                <label for="fObservations">Observation</label>
+                <div class="field-wrap {% if app.request.get('observations') %}has-value{% endif %}">
+                    <input type="text" id="fObservations" name="observations" placeholder="Ex : A1/A6" value="{{ app.request.get('observations') }}">
+                    <button type="button" class="clear-btn" data-clears="fObservations" aria-label="Effacer l'observation">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-		<a href="{{ path('trajet_new') }}" class="btn btn-primary mt-3">Créer un nouveau trajet</a>
-	</div>
+        <div class="filter-meta" id="resultCount"></div>
+    </form>
 
-	{# Inclure le script JS pour la recherche instantanée et l'inversion avec animation #}
-	<script>
-		// Fonction pour effectuer la recherche
-function performSearch(formId) {
-let form = document.getElementById(formId);
-let formData = new FormData(form);
-let url = '{{ path("trajet_list") }}?' + new URLSearchParams(formData).toString();
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Départ</th>
+                    <th scope="col">Arrivée</th>
+                    <th scope="col">Temps</th>
+                    <th scope="col">Observation</th>
+                    <th scope="col" class="col-actions" style="justify-content:flex-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="trajetList">
+                {% include 'trajet/_trajet_list.html.twig' with { 'trajets': trajets } %}
+            </tbody>
+        </table>
+    </div>
 
-fetch(url, {
-headers: {
-'X-Requested-With': 'XMLHttpRequest'
-}
-}).then(response => response.text()).then(html => {
-document.getElementById('trajetList').innerHTML = html;
-});
-}
+    <a href="{{ path('trajet_new') }}" class="fab" aria-label="Créer un nouveau trajet" title="Créer un nouveau trajet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </a>
+{% endblock %}
 
-// Écouteurs pour la recherche
-document.getElementById('searchQueryOld').addEventListener('input', function () {
-performSearch('searchFormOld');
-});
+{% block javascripts %}
+<script>
+(function () {
+    var form = document.getElementById('searchForm');
+    var fields = ['fDepart', 'fArrivee', 'fTemps', 'fObservations'];
+    var paramByFieldId = { fDepart: 'depart', fArrivee: 'arrivee', fTemps: 'temps', fObservations: 'observations' };
+    var list = document.getElementById('trajetList');
+    var resultCount = document.getElementById('resultCount');
+    var listUrl = '{{ path('trajet_list') }}';
+    var debounceTimer = null;
+    var currentRequest = null;
 
-document.getElementById('searchQueryNew').addEventListener('input', function () {
-performSearch('searchFormNew');
-});
+    function inputEl(id) { return document.getElementById(id); }
 
-// Fonction pour inverser les valeurs des deux sélecteurs sans toucher aux champs de recherche avec animation
-document.getElementById('invertButton').addEventListener('click', function () {
-let oldSelect = document.getElementById('searchAttributeOld');
-let newSelect = document.getElementById('searchAttributeNew');
-let oldQuery = document.getElementById('searchQueryOld').value;
-let newQuery = document.getElementById('searchQueryNew').value;
+    function toggleClearButton(input) {
+        var wrap = input.closest('.field-wrap');
+        wrap.classList.toggle('has-value', input.value.length > 0);
+    }
 
-// Afficher les valeurs avant inversion pour débogage
-console.log('Before inversion:');
-console.log('Old Select Value:', oldSelect.value);
-console.log('New Select Value:', newSelect.value);
-console.log('Old Query:', oldQuery);
-console.log('New Query:', newQuery);
+    function updateResultCount() {
+        var rows = list.querySelectorAll('tr.data-row').length;
+        if (!rows) {
+            resultCount.textContent = '';
+            return;
+        }
+        resultCount.textContent = rows + ' trajet' + (rows > 1 ? 's' : '') + ' trouvé' + (rows > 1 ? 's' : '');
+    }
 
-// Inverser uniquement les valeurs sélectionnées dans les select
-let tempValue = oldSelect.value;
-oldSelect.value = newSelect.value;
-newSelect.value = tempValue;
+    function performSearch() {
+        var params = new URLSearchParams();
+        fields.forEach(function (id) {
+            params.set(paramByFieldId[id], inputEl(id).value);
+        });
 
-// Ajouter ou alterner les classes 'rotate' et 'rotate-back' pour faire tourner dans une direction différente à chaque clic
-if (this.classList.contains('rotate')) {
-this.classList.remove('rotate');
-this.classList.add('rotate-back');
-} else {
-this.classList.remove('rotate-back');
-this.classList.add('rotate');
-}
+        if (currentRequest) {
+            currentRequest.abort();
+        }
+        var controller = new AbortController();
+        currentRequest = controller;
 
-// Mettre à jour la valeur des sélecteurs dans les formulaires respectifs
-document.getElementById('searchAttributeOld').value = oldSelect.value;
-document.getElementById('searchAttributeNew').value = newSelect.value;
+        fetch(listUrl + '?' + params.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            signal: controller.signal
+        })
+            .then(function (response) { return response.text(); })
+            .then(function (html) {
+                list.innerHTML = html;
+                updateResultCount();
+            })
+            .catch(function (error) {
+                if (error.name !== 'AbortError') {
+                    console.error(error);
+                }
+            });
+    }
 
-// Effectuer la recherche avec les valeurs de recherche actuelles
-performSearch('searchFormOld');
-performSearch('searchFormNew');
+    fields.forEach(function (id) {
+        var input = inputEl(id);
+        input.addEventListener('input', function () {
+            toggleClearButton(input);
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(performSearch, 250);
+        });
+        toggleClearButton(input);
+    });
 
-// Afficher les valeurs après inversion pour débogage
-console.log('After inversion:');
-console.log('Old Select Value:', oldSelect.value);
-console.log('New Select Value:', newSelect.value);
-console.log('Old Query:', oldQuery);
-console.log('New Query:', newQuery);
-});
-	</script>
+    document.querySelectorAll('.clear-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var input = inputEl(btn.dataset.clears);
+            input.value = '';
+            toggleClearButton(input);
+            input.focus();
+            performSearch();
+        });
+    });
 
-	<style>
-		/* Animation pour l'icône lors de l'inversion */
-		#invertButton i {
-			transition: transform 0.5s;
-		}
+    form.addEventListener('submit', function (e) { e.preventDefault(); });
 
-		#invertButton {
-
-			transform: rotate(90deg);
-		}
-
-		#invertButton.rotate i {
-			transform: rotate(180deg);
-		}
-
-		#invertButton {
-			transition: transform 0.5s ease;
-		}
-
-		.rotate {
-			transform: rotate(180deg);
-		}
-
-		.rotate-back {
-			transform: rotate(360deg);
-		}
-	</style>
+    updateResultCount();
+})();
+</script>
 {% endblock %}
